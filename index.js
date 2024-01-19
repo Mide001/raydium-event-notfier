@@ -41,7 +41,7 @@ async function sendTelegramMessage(message) {
   });
 
   const responseData = await response.json();
-  console.log("Telegram API Response:", responseData);
+  // console.log("Telegram API Response:", responseData);
 
   return responseData;
 }
@@ -58,7 +58,7 @@ async function main(connection, programAddress) {
       if (err) return;
 
       if (logs && logs.some((log) => log.includes("initialize2"))) {
-        console.log("Signature for 'initialize2': ", signature);
+        // console.log("Signature for 'initialize2': ", signature);
 
         // Check if this transaction has been processed already
         if (signature !== lastProcessedTxId) {
@@ -82,11 +82,11 @@ async function fetchRaydiumAccounts(txId, connection) {
     (ix) => ix.programId.toBase58() === RAYDIUM_PUBLIC_KEY
   ).accounts;
   if (!accounts) {
-    console.log("No accounts found in the transaction.");
+    // console.log("No accounts found in the transaction.");
     return;
   }
 
-  console.log("Account Full Details: ", accounts)
+  // console.log("Account Full Details: ", accounts)
   const tokenAIndex = 8;
   const tokenBIndex = 9;
   const tokenAAccount = accounts[tokenAIndex];
@@ -101,10 +101,10 @@ async function fetchRaydiumAccounts(txId, connection) {
       "Account Public Key": tokenBAccount.toBase58(),
     },
   ];
-  console.log("New LP Found");
-  console.log(generateExplorerUrl(txId));
-  console.table(displayData);
-  console.log("Total QuickNode Credits Used in this session:", credits);
+  // console.log("New LP Found");
+  // console.log(generateExplorerUrl(txId));
+  // console.table(displayData);
+  // console.log("Total QuickNode Credits Used in this session:", credits);
   // Compose the message you want to send
   const message = `
   New LP Found!

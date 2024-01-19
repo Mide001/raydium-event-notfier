@@ -30,8 +30,8 @@ Before using the Solana Liquidity Pool Tracker, make sure you have the following
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/solana-liquidity-pool-tracker.git
-    cd solana-liquidity-pool-tracker
+    git clone https://github.com/Mide001/raydium-event-notfier.git
+    cd raydium-event-notfier
     ```
 
 2. Install dependencies:
