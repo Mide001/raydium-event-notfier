@@ -26,25 +26,29 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 async function sendTelegramMessage(message) {
-  const apiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-  const requestBody = {
-    chat_id: TELEGRAM_CHAT_ID,
-    text: message,
-  };
-
-  const response = await fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestBody),
-  });
-
-  const responseData = await response.json();
-  // console.log("Telegram API Response:", responseData);
-
-  return responseData;
-}
+    const apiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    const requestBody = {
+      chat_id: TELEGRAM_CHAT_ID,
+      text: message,
+    };
+  
+    try {
+      const response = await fetch(apiUrl, {
+        method: "post",
+        body: JSON.stringify(requestBody),
+        headers: { 'Content-Type': 'application/json' },
+      });
+  
+      const responseData = await response.json();
+      // console.log("Telegram API Response:", responseData);
+  
+      return responseData;
+    } catch (error) {
+      console.error("Error sending Telegram message:", error);
+      throw error; // You can handle the error here or rethrow it for further handling.
+    }
+  }
+  
 
 let lastProcessedTxId = null;  // Variable to store the last processed transaction ID
 
