@@ -1,6 +1,6 @@
-import { Connection, PublicKey } from "@solana/web3.js"; //require("@solana/web3.js");
-import fetch from "node-fetch"; //= require("node-fetch");
-import {} from 'dotenv/config';
+import { Connection, PublicKey } from "@solana/web3.js";
+import fetch from "node-fetch";
+import {} from "dotenv/config";
 
 const RAYDIUM_PUBLIC_KEY = process.env.RAYDIUM_PUBLIC_KEY;
 const quiknodeApiKey = process.env.QUICKNODE_API;
@@ -24,24 +24,30 @@ const connection = new Connection(
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const TELEGRAM_CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID;
 
-async function sendTelegramMessage(message) {
+/* 
+async function testTelegramChannelChatId() {
     const apiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+  
+    // Define a static message for testing
+    const staticMessage = "This is a test message for the Telegram channel.";
+  
     const requestBody = {
-      chat_id: TELEGRAM_CHAT_ID,
-      text: message,
+      chat_id: TELEGRAM_CHANNEL_ID,
+      text: staticMessage,
     };
   
     try {
       const response = await fetch(apiUrl, {
         method: "post",
         body: JSON.stringify(requestBody),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
   
       const responseData = await response.json();
-      // console.log("Telegram API Response:", responseData);
   
+      console.log("Telegram API Response:", responseData);
       return responseData;
     } catch (error) {
       console.error("Error sending Telegram message:", error);
@@ -49,8 +55,34 @@ async function sendTelegramMessage(message) {
     }
   }
   
+  // Call the function to test the Telegram channel chat ID
+  testTelegramChannelChatId(); */
 
-let lastProcessedTxId = null;  // Variable to store the last processed transaction ID
+
+async function sendTelegramMessage(message) {
+  const apiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+  const requestBody = {
+    chat_id: TELEGRAM_CHANNEL_ID,
+    text: message,
+  };
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: "post",
+      body: JSON.stringify(requestBody),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const responseData = await response.json();
+
+    return responseData;
+  } catch (error) {
+    console.error("Error sending Telegram message:", error);
+    throw error; // You can handle the error here or rethrow it for further handling.
+  }
+}
+
+let lastProcessedTxId = null; // Variable to store the last processed transaction ID
 
 // to monitor logs
 async function main(connection, programAddress) {
@@ -62,8 +94,6 @@ async function main(connection, programAddress) {
       if (err) return;
 
       if (logs && logs.some((log) => log.includes("initialize2"))) {
-        // console.log("Signature for 'initialize2': ", signature);
-
         // Check if this transaction has been processed already
         if (signature !== lastProcessedTxId) {
           lastProcessedTxId = signature;
@@ -86,11 +116,9 @@ async function fetchRaydiumAccounts(txId, connection) {
     (ix) => ix.programId.toBase58() === RAYDIUM_PUBLIC_KEY
   ).accounts;
   if (!accounts) {
-    // console.log("No accounts found in the transaction.");
     return;
   }
 
-  // console.log("Account Full Details: ", accounts)
   const tokenAIndex = 8;
   const tokenBIndex = 9;
   const tokenAAccount = accounts[tokenAIndex];
@@ -105,11 +133,6 @@ async function fetchRaydiumAccounts(txId, connection) {
       "Account Public Key": tokenBAccount.toBase58(),
     },
   ];
-  // console.log("New LP Found");
-  // console.log(generateExplorerUrl(txId));
-  // console.table(displayData);
-  // console.log("Total QuickNode Credits Used in this session:", credits);
-  // Compose the message you want to send
   const message = `
   New LP Found!
   Explorer URL: ${generateExplorerUrl(txId)}
@@ -124,7 +147,5 @@ async function fetchRaydiumAccounts(txId, connection) {
 function generateExplorerUrl(txId) {
   return `https://solscan.io/tx/${txId}`;
 }
-
-
 
 main(connection, raydium).catch(console.error);
